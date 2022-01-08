@@ -1,0 +1,27 @@
+1. git init
+
+2. git add .
+
+3. git remote add origin git@gitlab.com:moharaja/agro.git
+
+4. git commit -m "first commit"
+
+5. git push origin master
+{
+	if see this error
+		error: src refspec master does not match any.
+		error: failed to push some refs to 'git@gitlab.com:moharaja/agro.git'
+	solve
+		1. touch initial
+		2. git add initial
+		3.  git commit -m "first commit"
+
+}
+
+5. check update
+	>> 	git status
+	>>	git add .
+	>>	git commit -m "some change on migration and model files"
+	>>	(git log) -> not need every time
+	>>	git pull
+	>>	git push

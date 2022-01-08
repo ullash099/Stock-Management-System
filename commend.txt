@@ -1,0 +1,229 @@
+|===================================================|
+|                                                   |
+|---------------------------------------------------|
+
+|===================================================|
+|                                                   |
+|                  showing list                     |
+|       {}	= variable , can change when need;      |
+|               *for show {make} list               |
+|                                                   |
+|===================================================|
+>>  php artisan list {make}
+
+
+|***********************start********************************|
+*   |===================================================|
+*   |                                                   |
+*   |           for fake data generate                  |
+*   |           1st generate a factory                  |
+*   |           *Ex. for fake user                      |
+*   |                                                   |
+*   |===================================================|
+*   >>	 php artisan make:factory UserFactory --model=User
+*   |---------------------------------------------------|
+*   |           *now run tinker for run factory         |
+*   |---------------------------------------------------|
+*   >>	php artisan tinker
+*   |---------------------------------------------------|
+*   |           *lets make some fake user               |
+*   |---------------------------------------------------|
+*   >>	User::factory()->count(500)->create()
+*   >>	exit
+*
+|***********************end**********************************|
+
+|***********************start********************************|
+*   |===================================================|
+*   |                                                   |
+*   |               for making ses                      |
+*   |                                                   |
+*   |===================================================|
+*   >>  npm run dev
+*   |---------------------------------------------------|
+*   |               or you can use this                 |
+*   |---------------------------------------------------|
+*   >> npm rum watch
+*   |---------------------------------------------------|
+*   |  keep it run when you r updating css or js file   |
+*   |---------------------------------------------------|
+|***********************end**********************************|
+
+|===================================================|
+|                                                   |
+|               for make controller                 |
+|                                                   |
+|===================================================|
+>> php artisan make:controller PhotoController --resource
+
+|===================================================|
+|                                                   |
+|       for making migrations with table name       |
+|                                                   |
+|===================================================|
+>> php artisan make:migration create_users_table --create=users
+
+|===================================================|
+|                                                   |
+|          run migration for making database        |
+|                                                   |
+|===================================================|
+>> php artisan migrate
+
+|===================================================|
+|                                                   |
+|               for making model                    |
+|                                                   |
+|===================================================|
+>> php artisan make:model Common
+
+|===================================================|
+|                                                   |
+|           for making model with migrate           |
+|                                                   |
+|===================================================|
+>> php artisan make:model Common -m
+
+|===================================================|
+|                                                   |
+|           update all composer component           |
+|                                                   |
+|===================================================|
+>> composer update
+
+|===================================================|
+|                                                   |
+|           update composer single component        |
+|                                                   |
+|===================================================|
+>> composer dumpauto
+
+|===================================================|
+|                                                   |
+|                  clear cache                      |
+|                                                   |
+|===================================================|
+>> php artisan cache:clear
+
+|===================================================|
+|                                                   |
+|       in case need to clear every thing           |
+|                                                   |
+|===================================================|
+
+1. >>   php artisan config:cache
+2. >>   php artisan config:clear
+3. >>   php artisan cache:clear
+4. >>   php artisan route:cache
+5. >>   php artisan view:clear
+6. >>   php artisan config:cache
+7. >>   service apache2 restart (just in case)
+
+php artisan config:cache
+php artisan config:clear
+php artisan cache:clear
+php artisan route:cache
+php artisan view:clear
+service apache2 restart
+
+php artisan optimize:clear
+
+|===================================================|
+|                                                   |
+|                see all route name                 |
+|                                                   |
+|===================================================|
+>>   php artisan route:list
+
+|===================================================|
+|                                                   |
+|                publish package                    |
+|                                                   |
+|===================================================|
+>>  1. php artisan vendor:publish
+>>  2. php artisan vendor:publish --tag=datatables
+
+|===================================================|
+|                                                   |
+|                remove  package                    |
+|                                                   |
+|===================================================|
+>>  composer remove illuminate/html
+
+create email
+>> php artisan make:mail PasswordResetConfirmation --markdown emails.password-reset-confirmation
+
+make component
+>> php artisan make:component Alert
+
+Install Laravel Excel Package
+
+>> composer require maatwebsite/excel
+>> php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider" --tag=config
+
+
+change on 
+|=================|
+|config/excel.php |
+|=================|
+>> 'enclosure'  => '"', to 'enclosure' => '',
+
+Create Import Class
+>> php artisan make:import UsersImport --model=User
+
+==============================|
+class UsersImport implements ToModel, WithStartRow, WithCustomCsvSettings
+{
+    public function startRow(): int
+    {
+        return 2;
+    }
+
+    public function getCsvSettings(): array
+    {
+        return [
+            'delimiter' => ';'
+        ];
+    }
+
+    public function model(array $row)
+    {
+        return new User([
+           'name'     => $row[0],
+           'email'    => $row[1],
+           'password' => \Hash::make($row[2]),
+        ]);
+    }
+} 
+
+controller code
+Excel::import(new UsersImport, request()->file('file'));
+==============================|
+
+Create Export Class
+>> php artisan make:export UsersExport --model=User
+
+==============================|
+class UsersExport implements FromCollection, WithCustomCsvSettings, WithHeadings
+{
+    public function getCsvSettings(): array
+    {
+        return [
+            'delimiter' => ';'
+        ];
+    }
+
+    public function headings(): array
+    {
+        return ["Name", "Email"];
+    }
+    
+    public function collection()
+    {
+        return User::select('name','email')->get();
+    }
+}
+==============================|
+
+controller code for export
+return Excel::download(new UsersExport, 'users.csv');
